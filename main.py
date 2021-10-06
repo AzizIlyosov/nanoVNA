@@ -320,7 +320,7 @@ class Window(QMainWindow, Ui_MainWindow):
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(
             filter="Touchstone Files (*.s1p *.s2p);;All files (*.*)")
         if filename != "":    
-            t= Touchstone('/home/aziz/Desktop/nanoVNA/test/data/attenuator-0643_MA.s2p')
+            t= Touchstone('test/data/attenuator-0643_MA.s2p')
             t.load()
             print(t.s11data)
 
