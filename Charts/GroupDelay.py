@@ -24,7 +24,7 @@ import numpy as np
 
 from PyQt5 import QtWidgets, QtGui
 
-from NanoVNASaver.RFTools import Datapoint
+from  RFTools import Datapoint
 from .Frequency import FrequencyChart
 logger = logging.getLogger(__name__)
 

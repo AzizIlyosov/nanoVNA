@@ -67,7 +67,7 @@ def get_interfaces() -> List[Interface]:
         if platform.system() == 'Windows' and d.vid is None:
             d = _fix_v2_hwinfo(d)
         for t in USBDEVICETYPES:
-            print('this is usb devices  ', USBDEVICETYPES)
+            # print('this is usb devices  ', USBDEVICETYPES)
             if d.vid != t.vid or d.pid != t.pid:
                 continue
             logger.debug("Found %s USB:(%04x:%04x) on port %s",

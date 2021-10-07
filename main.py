@@ -258,7 +258,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # new item for serieal port should be added in this line 
         # self.serialPortInput.clear()
         for iface in get_interfaces():
-            # self.serialPortInput.insertItem(1, f"{iface}", iface)
+            self.serialPortInput.insertItem(1, f"{iface}", iface)
             print('this is iface ', iface)
         # self.serialPortInput.repaint()
     
@@ -293,22 +293,24 @@ class Window(QMainWindow, Ui_MainWindow):
         self.btnSerialToggle.repaint()
 
         frequencies = self.vna.readFrequencies()
+        print('this is frequencies ', frequencies)
+
         if not frequencies:
             logger.warning("No frequencies read")
             return
         logger.info("Read starting frequency %s and end frequency %s",
                     frequencies[0], frequencies[-1])
-        self.sweep_control.set_start(frequencies[0])
-        if frequencies[0] < frequencies[-1]:
-            self.sweep_control.set_end(frequencies[-1])
-        else:
-            self.sweep_control.set_end(
-                frequencies[0] +
-                self.vna.datapoints * self.sweep_control.get_segments())
+        # self.sweep_control.set_start(frequencies[0])
+        # if frequencies[0] < frequencies[-1]:
+        #     self.sweep_control.set_end(frequencies[-1])
+        # else:
+        #     self.sweep_control.set_end(
+        #         frequencies[0] +
+                # self.vna.datapoints * self.sweep_control.get_segments())
 
-        self.sweep_control.set_segments(1)  # speed up things
-        self.sweep_control.update_center_span()
-        self.sweep_control.update_step_size()
+        # self.sweep_control.set_segments(1)  # speed up things
+        # self.sweep_control.update_center_span()
+        # self.sweep_control.update_step_size()
 
         self.windows["sweep_settings"].vna_connected()
 

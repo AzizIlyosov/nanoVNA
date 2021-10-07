@@ -20,7 +20,7 @@ import math
 import logging
 from typing import List
 
-from NanoVNASaver.RFTools import Datapoint
+from  RFTools import Datapoint
 
 from .RI import RealImaginaryChart
 

@@ -22,7 +22,7 @@ from typing import List
 
 from PyQt5 import QtWidgets, QtGui
 
-from NanoVNASaver.RFTools import Datapoint
+from  RFTools import Datapoint
 from NanoVNASaver.SITools import Format, Value
 from .Frequency import FrequencyChart
 

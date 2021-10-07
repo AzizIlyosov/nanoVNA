@@ -23,7 +23,7 @@ import logging
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import pyqtSignal
 
-from NanoVNASaver.RFTools import Datapoint
+from  RFTools import Datapoint
 from NanoVNASaver.Marker import Marker
 logger = logging.getLogger(__name__)
 

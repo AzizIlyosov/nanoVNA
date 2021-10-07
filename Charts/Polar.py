@@ -21,7 +21,7 @@ import logging
 
 from PyQt5 import QtGui, QtCore
 
-from NanoVNASaver.RFTools import Datapoint
+from  RFTools import Datapoint
 from .Square import SquareChart
 
 logger = logging.getLogger(__name__)
