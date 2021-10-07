@@ -21,9 +21,9 @@ import math
 
 from PyQt5 import QtWidgets
 
-from NanoVNASaver.Formatting import format_frequency
+from Formatting import format_frequency
 
-from NanoVNASaver.Analysis import Analysis
+from Analysis import Analysis
 
 logger = logging.getLogger(__name__)
 

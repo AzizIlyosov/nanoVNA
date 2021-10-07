@@ -22,11 +22,11 @@ from PyQt5 import QtWidgets
 from scipy import signal
 import numpy as np
 
-from NanoVNASaver.Analysis import Analysis
-from NanoVNASaver.Formatting import format_vswr
-from NanoVNASaver.Formatting import format_gain
-from NanoVNASaver.Formatting import format_resistance
-from NanoVNASaver.Formatting import format_frequency_short
+from  Analysis import Analysis
+from  Formatting import format_vswr
+from  Formatting import format_gain
+from  Formatting import format_resistance
+from  Formatting import format_frequency_short
 
 
 logger = logging.getLogger(__name__)

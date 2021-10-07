@@ -21,8 +21,8 @@ import logging
 from PyQt5 import QtWidgets
 import numpy as np
 
-from NanoVNASaver.Analysis import Analysis, PeakSearchAnalysis
-from NanoVNASaver.Formatting import format_frequency
+from  Analysis import Analysis, PeakSearchAnalysis
+from  Formatting import format_frequency
 
 
 logger = logging.getLogger(__name__)

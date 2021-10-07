@@ -24,7 +24,7 @@ import logging
 
 from PyQt5 import QtWidgets
 
-from NanoVNASaver.Analysis.VSWRAnalysis import VSWRAnalysis
+from  Analysis.VSWRAnalysis import VSWRAnalysis
 
 
 logger = logging.getLogger(__name__)

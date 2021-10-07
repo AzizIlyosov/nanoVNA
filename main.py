@@ -23,8 +23,20 @@ from time import sleep
 from Calibration import Calibration
 from Marker import Marker, DeltaMarker
 from SweepWorker import SweepWorker
+
 from Settings import BandsModel, Sweep
 from Touchstone import Touchstone
+from Windows import (
+    # AboutWindow, 
+    AnalysisWindow, CalibrationWindow,
+    DeviceSettingsWindow, 
+    # DisplaySettingsWindow,
+     SweepSettingsWindow,
+    TDRWindow
+)
+
+
+
 import pyqtgraph as pg
 
 from forms.main import Ui_MainWindow
@@ -50,6 +62,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.sweep = Sweep()
         self.worker = SweepWorker(self)
         print('this is  worker ', self.worker)
+        self.settings = QtCore.QSettings(QtCore.QSettings.IniFormat,
+                                         QtCore.QSettings.UserScope,
+                                         "NanoVNASaver", "NanoVNASaver")
         # worker is socket which  reads data continiously 
         self.worker.signals.updated.connect(self.dataUpdated)
         self.worker.signals.finished.connect(self.sweepFinished)
@@ -82,6 +97,16 @@ class Window(QMainWindow, Ui_MainWindow):
         self.baseTitle = f"NanoVNA Saver  "
         # self.updateTitle()
         layout = QtWidgets.QBoxLayout(QtWidgets.QBoxLayout.LeftToRight)
+        self.windows = {
+            # "about": AboutWindow(self),
+            # "analysis": AnalysisWindow(self),
+            # "calibration": CalibrationWindow(self),
+            # "device_settings": DeviceSettingsWindow(self),
+            "file": QtWidgets.QWidget(),
+            "sweep_settings": SweepSettingsWindow(self),
+            # "setup": DisplaySettingsWindow(self),
+            "tdr": TDRWindow(self),
+        }
 
         # scrollarea = QtWidgets.QScrollArea()
         # outer = QtWidgets.QVBoxLayout()
@@ -99,12 +124,67 @@ class Window(QMainWindow, Ui_MainWindow):
         # widget.setLayout(layout)
         # scrollarea.setWidget(widget)
 
-
+        self.connect_device()
 
         self.setupUi(self) 
         self.connectSignalsSlots()
         self.plotData()
         self.rescanSerialPort()
+
+
+
+    def connect_device(self):
+        if not self.interface:
+            return
+        with self.interface.lock:
+            self.interface = self.serialPortInput.currentData()
+            logger.info("Connection %s", self.interface)
+            try:
+                self.interface.open()
+
+            except (IOError, AttributeError) as exc:
+                logger.error("Tried to open %s and failed: %s",
+                             self.interface, exc)
+                return
+            if not self.interface.isOpen():
+                logger.error("Unable to open port %s", self.interface)
+                return
+            self.interface.timeout = 0.05
+        sleep(0.1)
+        try:
+            self.vna = get_VNA(self.interface)
+        except IOError as exc:
+            logger.error("Unable to connect to VNA: %s", exc)
+
+        self.vna.validateInput = self.settings.value(
+            "SerialInputValidation", True, bool)
+
+        # connected
+        self.btnSerialToggle.setText("Disconnect")
+        self.btnSerialToggle.repaint()
+
+        frequencies = self.vna.readFrequencies()
+        if not frequencies:
+            logger.warning("No frequencies read")
+            return
+        logger.info("Read starting frequency %s and end frequency %s",
+                    frequencies[0], frequencies[-1])
+        self.sweep_control.set_start(frequencies[0])
+        if frequencies[0] < frequencies[-1]:
+            self.sweep_control.set_end(frequencies[-1])
+        else:
+            self.sweep_control.set_end(
+                frequencies[0] +
+                self.vna.datapoints * self.sweep_control.get_segments())
+
+        self.sweep_control.set_segments(1)  # speed up things
+        self.sweep_control.update_center_span()
+        self.sweep_control.update_step_size()
+
+        self.windows["sweep_settings"].vna_connected()
+
+        logger.debug("Starting initial sweep")
+        self.sweep_start()
 
     # this  slots  connec all buttons with  dialogs 
     def connectSignalsSlots(self):

@@ -21,18 +21,18 @@ import logging
 from PyQt5 import QtWidgets
 import numpy as np
 
-from NanoVNASaver.Analysis import Analysis, PeakSearchAnalysis
-from NanoVNASaver.Formatting import format_frequency
-from NanoVNASaver.Formatting import format_complex_imp
-from NanoVNASaver.RFTools import reflection_coefficient
+from  Analysis import Analysis, PeakSearchAnalysis
+from Formatting import format_frequency
+from  Formatting import format_complex_imp
+from  RFTools import reflection_coefficient
 import os
 import csv
-from NanoVNASaver.Marker.Values import Label
-from NanoVNASaver.Marker.Widget import MarkerLabel
-from NanoVNASaver.Marker.Widget import Marker
+from  Marker.Values import Label
+from  Marker.Widget import MarkerLabel
+from  Marker.Widget import Marker
 from collections import OrderedDict
-from NanoVNASaver.Formatting import format_frequency_short
-from NanoVNASaver.Formatting import format_resistance
+from  Formatting import format_frequency_short
+from  Formatting import format_resistance
 
 logger = logging.getLogger(__name__)
 
