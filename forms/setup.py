@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(630, 272)
+        Dialog.resize(630, 297)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -32,6 +32,8 @@ class Ui_Dialog(object):
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.radioButton = QtWidgets.QRadioButton(self.groupBox)
+        self.radioButton.setCheckable(True)
+        self.radioButton.setChecked(True)
         self.radioButton.setObjectName("radioButton")
         self.verticalLayout_3.addWidget(self.radioButton)
         self.radioButton_2 = QtWidgets.QRadioButton(self.groupBox)

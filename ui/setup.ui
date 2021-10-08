@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>630</width>
-    <height>272</height>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,6 +47,12 @@
            <widget class="QRadioButton" name="radioButton">
             <property name="text">
              <string>Nano VNA(~3.0GHz)</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
