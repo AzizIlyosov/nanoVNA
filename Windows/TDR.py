@@ -123,7 +123,7 @@ class TDRWindow(QtWidgets.QWidget):
 
         step_size = self.app.data11[1].freq - self.app.data11[0].freq
         if step_size == 0:
-            self.tdr_result_label.setText("")
+            # self.tdr_result_label.setText("")
             logger.info("Cannot compute cable length at 0 span")
             return
 
@@ -150,6 +150,6 @@ class TDRWindow(QtWidgets.QWidget):
         feet = math.floor(cable_len / 0.3048)
         inches = round(((cable_len / 0.3048) - feet)*12, 1)
 
-        self.tdr_result_label.setText(f"{cable_len}m ({feet}ft {inches}in)")
-        self.app.tdr_result_label.setText(str(cable_len) + " m")
+        # self.tdr_result_label.setText(f"{cable_len}m ({feet}ft {inches}in)")
+        # self.app.tdr_result_label.setText(str(cable_len) + " m")
         self.updated.emit()

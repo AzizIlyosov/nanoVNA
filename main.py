@@ -19,6 +19,7 @@ from Settings import BandsModel, Sweep
 from SweepWorker import SweepWorker
 import threading
 from time import sleep
+from time import sleep, strftime, localtime
 
 from Calibration import Calibration
 from Marker import Marker, DeltaMarker
@@ -56,6 +57,8 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.s21att = 0.0
 
         self.threadpool = QtCore.QThreadPool()
 
@@ -107,6 +110,7 @@ class Window(QMainWindow, Ui_MainWindow):
             # "setup": DisplaySettingsWindow(self),
             "tdr": TDRWindow(self),
         }
+        self.sweep_control = SweepControl(self)
 
         # scrollarea = QtWidgets.QScrollArea()
         # outer = QtWidgets.QVBoxLayout()
@@ -128,10 +132,11 @@ class Window(QMainWindow, Ui_MainWindow):
 
         self.setupUi(self) 
         self.connectSignalsSlots()
-        self.plotData()
         self.rescanSerialPort()
 
 
+    def sweep_stop(self):
+        self.worker.stopped = True
 
     def connect_device(self):
         if not self.interface:
@@ -192,12 +197,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushButton.clicked.connect(self.openScale)
         self.pushButton_4.clicked.connect(self.openData) 
     
-
-    def plotData(self):
-        print('plot data ')
-        textx = [1,2,3,4,5,6,7,8,9,10]
-        testy = [30,32,34,32,33,31,29,32,35,45]
-        self.widget.plot(textx, testy)
+ 
+        
         
 
 
@@ -206,29 +207,57 @@ class Window(QMainWindow, Ui_MainWindow):
 
 
     
+    def saveData(self, data, data21, source=None):
+        with self.dataLock:
+            self.data11 = data
+            self.data21 = data21
+            if self.s21att > 0:
+                self.data21 = corr_att_data(self.data21, self.s21att)
+        if source is not None:
+            self.sweepSource = source
+        else:
+            print('this is name of property ', self.sweep.properties.name)
+            self.sweepSource = (
+                f"{self.sweep.properties.name}"
+                f" {strftime('%Y-%m-%d %H:%M:%S', localtime())}"
+            ).lstrip()
+
+    
+
 
     def dataUpdated(self):
         with self.dataLock:
+            print('this is data11 ', self.data11)
+            print('this is data21 ', self.data21)
             s11data = self.data11[:]
             s21data = self.data21[:]
+            # draw only  s11data as test 
+            print('type = ', type(s11data))
+            print('type = ', type(s11data[0]))
+            print('magnitude ', s11data[0].magnitude())
+            for  p in s11data:
+                y = [p.magnitude() for p in s11data]
+                x = [p.freq for p in s11data]
+            self.widget.plot(x, y)
 
-        for m in self.markers:
-            m.resetLabels()
-            m.updateLabels(s11data, s21data)
 
-        for c in self.s11charts:
-            print('data is  updates', c)
-            c.setData(s11data)
+        # for m in self.markers:
+        #     m.resetLabels()
+        #     m.updateLabels(s11data, s21data)
 
-        for c in self.s21charts:
-            print('data is  updates', c)
-            c.setData(s21data)
+        # for c in self.s11charts:
+        #     print('data is  updates', c)
+        #     c.setData(s11data)
 
-        for c in self.combinedCharts:
-            c.setCombinedData(s11data, s21data)
+        # for c in self.s21charts:
+        #     print('data is  updates', c)
+        #     c.setData(s21data)
 
-        self.sweep_control.progress_bar.setValue(self.worker.percentage)
-        self.windows["tdr"].updateTDR()
+        # for c in self.combinedCharts:
+        #     c.setCombinedData(s11data, s21data)
+
+        # self.sweep_control.progress_bar.setValue(self.worker.percentage)
+        # self.windows["tdr"].updateTDR()
 
         # if s11data:
         #     min_vswr = min(s11data, key=lambda data: data.vswr)
@@ -261,9 +290,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.sweep_control.btn_stop.setDisabled(True)
         self.sweep_control.toggle_settings(False)
 
-        for marker in self.markers:
-            marker.frequencyInput.textEdited.emit(
-                marker.frequencyInput.text())
+        # for marker in self.markers:
+        #     marker.frequencyInput.textEdited.emit(
+        #         marker.frequencyInput.text())
 
     def setReference(self, s11data=None, s21data=None, source=None):
         if not s11data:
@@ -293,7 +322,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
 
     def showFatalSweepError(self):
-        self.showError(self.worker.error_message)
+        # self.showError(self.worker.error_message)
         self.stopSerial()
 
     def showSweepError(self):
@@ -304,6 +333,9 @@ class Window(QMainWindow, Ui_MainWindow):
         except IOError:
             pass
         self.sweepFinished()
+
+    def showError(self, text):
+        QtWidgets.QMessageBox.warning(self, "Error", text)
 
     
 
@@ -338,7 +370,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # new item for serieal port should be added in this line 
         # self.serialPortInput.clear()
         for iface in get_interfaces():
-            self.serialPortInput.insertItem(1, f"{iface}", iface)
+            # self.serialPortInput.insertItem(1, f"{iface}", iface)
             print('this is iface ', iface)
         # self.serialPortInput.repaint()
     
@@ -346,7 +378,8 @@ class Window(QMainWindow, Ui_MainWindow):
         if not self.interface:
             return
         with self.interface.lock:
-            self.interface = '/dev/ttyACMO(S-A-A-2)' #  self.serialPortInput.currentData()
+            # self.interface = '/dev/ttyACMO(S-A-A-2)' #  self.serialPortInput.currentData()
+            self.interface = get_interfaces()[0]
             logger.info("Connection %s", self.interface)
             try:
                 self.interface.open()
@@ -369,8 +402,8 @@ class Window(QMainWindow, Ui_MainWindow):
             "SerialInputValidation", True, bool)
 
         # connected
-        self.btnSerialToggle.setText("Disconnect")
-        self.btnSerialToggle.repaint()
+        # self.btnSerialToggle.setText("Disconnect")
+        # self.btnSerialToggle.repaint()
 
         frequencies = self.vna.readFrequencies()
         print('this is frequencies ', frequencies)
@@ -396,6 +429,31 @@ class Window(QMainWindow, Ui_MainWindow):
 
         logger.debug("Starting initial sweep")
         self.sweep_start()
+
+
+    def sweep_start(self):
+        # Run the device data update
+        if not self.vna.connected():
+            return
+        self.worker.stopped = False
+
+        # self.sweep_control.progress_bar.setValue(0)
+        # self.sweep_control.btn_start.setDisabled(True)
+        # self.sweep_control.btn_stop.setDisabled(False)
+        # self.sweep_control.toggle_settings(True)
+
+        # for m in self.markers:
+        #     m.resetLabels()
+        # self.s11_min_rl_label.setText("")
+        # self.s11_min_swr_label.setText("")
+        # self.s21_min_gain_label.setText("")
+        # self.s21_max_gain_label.setText("")
+        # self.tdr_result_label.setText("")
+
+        self.settings.setValue("Segments", self.sweep_control.get_segments())
+
+        logger.debug("Starting worker thread")
+        self.threadpool.start(self.worker)
     
     def loadSweepFile(self):
         #TODO: finish this method 

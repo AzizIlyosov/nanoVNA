@@ -60,6 +60,9 @@ class Datapoint(NamedTuple):
         if mag == 1:
             return 1
         return (1 + mag) / (1 - mag)
+    @property 
+    def magnitude(self)->float:
+        return math.sqrt(self.re**2+self.im**2)
 
     @property
     def wavelength(self) -> float:

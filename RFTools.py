@@ -41,6 +41,9 @@ class Datapoint(NamedTuple):
         """ return the datapoint impedance as complex number """
         # FIXME: not impedance, but s11 ?
         return complex(self.re, self.im)
+    
+     
+    
 
     @property
     def phase(self) -> float:
@@ -79,6 +82,11 @@ class Datapoint(NamedTuple):
             return 2 * ref_impedance * (1 - self.z) / self.z
         except ZeroDivisionError:
             return math.inf
+    
+    
+    def magnitude(self)->float:
+        
+        return abs(self.impedance())
 
     def qFactor(self, ref_impedance: float = 50) -> float:
         imp = self.impedance(ref_impedance)
