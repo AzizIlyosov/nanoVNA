@@ -42,6 +42,9 @@
          <property name="title">
           <string/>
          </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QRadioButton" name="radioButton">
@@ -61,6 +64,9 @@
             <property name="text">
              <string>Micro VNA(~1.5Hz)</string>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -70,14 +76,14 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>Connect</string>
-            </property>
-           </widget>
-          </item>
          </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>Connect</string>
+         </property>
         </widget>
        </item>
       </layout>
